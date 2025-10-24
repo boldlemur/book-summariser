@@ -37,6 +37,29 @@ GLOSSARY_TOKENS       = 800
 CLAIMS_TOKENS         = 900
 API_SLEEP             = 0.5
 
+import streamlit as st
+
+def check_password() -> bool:
+    """Simple password gate using st.secrets + session_state."""
+    def _password_entered():
+        pw = st.session_state.get("password", "")
+        if pw and pw == st.secrets.get("APP_PASSWORD"):
+            st.session_state["password_ok"] = True
+            # Don’t keep the plaintext password in memory
+            del st.session_state["password"]
+        else:
+            st.session_state["password_ok"] = False
+
+    if st.session_state.get("password_ok"):
+        return True
+
+    st.title("Login")
+    st.text_input("Password", type="password", on_change=_password_entered, key="password")
+    if st.session_state.get("password_ok") is False:
+        st.error("Wrong password. Try again.")
+    st.stop()
+
+
 # ---------------- Utilities ----------------
 def get_client():
     if OpenAI is None:
@@ -763,6 +786,7 @@ def build_claims_index_by_theme(client, themes: List[Dict[str,Any]], chapters: L
 st.set_page_config(page_title="📘 Book Summarizer (EPUB/PDF)", page_icon="📘", layout="wide")
 st.title("📘 Book Summarizer")
 st.caption("Chapters detected from EPUB TOC (OPF/NCX) or PDF sections. Clean chapter summaries, book themes, glossary, and claims index.")
+check_password()
 
 with st.sidebar:
     st.header("Settings")
