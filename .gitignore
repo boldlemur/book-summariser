@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+*.egg-info/
+
+# macOS / IDE
+.DS_Store
+.vscode/
+.idea/
+
+# Tests / cache
+.pytest_cache/
+
+# Streamlit
+.streamlit/secrets.toml
